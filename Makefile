@@ -28,6 +28,13 @@ up:
 	docker-compose pull
 	docker-compose up -d --remove-orphans
 
+.PHONY: hook
+hook:
+	touch .git/hooks/pre-commit
+	@echo "#!/bin/bash" >> .git/hooks/pre-commit
+	@echo "make phpcs" >> .git/hooks/pre-commit
+	chmod +x .git/hooks/pre-commit
+
 ## upnewsite	:	Deployment drupal 8.
 ##		Start up containers > Сomposer install > Compile settings.php
 .PHONY: upnewsite
