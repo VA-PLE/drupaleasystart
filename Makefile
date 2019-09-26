@@ -103,6 +103,7 @@ addsettings:
 	@cp -f $(SETTINGS_ROOT)/default.settings.php $(SETTINGS_ROOT)/settings.php
 	@echo '$$settings["hash_salt"] = "randomnadich";' >> $(SETTINGS_ROOT)/settings.php
 	@echo '$$config_directories["sync"] = "config/sync";' >> $(SETTINGS_ROOT)/settings.php
+	@echo '$$config["system.file"]["path"]["temporary"] = "tmp";' >> $(SETTINGS_ROOT)/settings.php
 	@echo '$$databases["default"]["default"] = array (' >> $(SETTINGS_ROOT)/settings.php
 	@echo "  'database' => '$(DB_NAME)'," >> $(SETTINGS_ROOT)/settings.php
 	@echo "  'username' => '$(DB_USER)'," >> $(SETTINGS_ROOT)/settings.php
