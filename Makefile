@@ -39,11 +39,13 @@ hook:
 ##		Start up containers > Сomposer install > Compile settings.php
 .PHONY: upnewsite
 upnewsite: up coin addsettings url
+	@docker exec -i $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) si
 
 ## up8		:	Deploying local site. For drupal 8.
 ##		Start up containers > Сomposer install > Compile settings.php > Mounting database
 .PHONY: up8
 up8: up coin addsettings restoredb url
+	@docker exec -i $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) cim -y
 
 ## up7		:	Deploying local site. For drupal 7.
 ##		Start up containers > Compile settings.php > Mounting database
