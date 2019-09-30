@@ -2,6 +2,14 @@ include .env
 
 default: help
 
+# Get user/group id to manage permissions between host and containers.
+LOCAL_UID := $(shell id -u)
+LOCAL_GID := $(shell id -g)
+
+# Evaluate recursively.
+CUID ?= $(LOCAL_UID)
+CGID ?= $(LOCAL_GID)
+
 ## help		:	Print commands help.
 .PHONY: help
 ifneq (,$(wildcard docker.mk))
@@ -35,22 +43,29 @@ hook:
 	@echo "make phpcs" >> .git/hooks/pre-commit
 	chmod +x .git/hooks/pre-commit
 
-## upnewsite	:	Deployment drupal 8.
-##		Start up containers > Сomposer install > Compile settings.php
+# upnewsite	:	Deployment drupal 8.
+#		Start up containers > Сomposer install > Compile settings.php
 .PHONY: upnewsite
-upnewsite: up coin addsettings url
-	@docker exec -i $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) si
+upnewsite: up coin addsettings druinsi url
 
 ## up8		:	Deploying local site. For drupal 8.
 ##		Start up containers > Сomposer install > Compile settings.php > Mounting database
 .PHONY: up8
-up8: up coin addsettings restoredb url
-	@docker exec -i $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) cim -y
+up8: up coin addsettings druinsi url
+	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) ev '\Drupal::entityManager()->getStorage("shortcut_set")->load("default")->delete();'
+	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) cim -y
 
-## up7		:	Deploying local site. For drupal 7.
-##		Start up containers > Compile settings.php > Mounting database
+# up7		:	Deploying local site. For drupal 7.
+#		Start up containers > Compile settings.php > Mounting database
 .PHONY: up7
 up7: up addsettings restoredb url
+
+# druinsi		:	Drush install site.
+.PHONY: druinsi
+druinsi:
+	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) si -y standard
+	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) cset system.site uuid c7635c29-335d-4655-b2b6-38cb111042d9
+
 
 ## start		:	Start containers without updating.
 .PHONY: start
@@ -74,13 +89,13 @@ prune:
 ##		For example: make composer "update drupal/core --with-dependencies"
 .PHONY: composer
 composer:
-	docker exec $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") composer --working-dir=$(COMPOSER_ROOT) $(filter-out $@,$(MAKECMDGOALS))
+	docker exec --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") composer --working-dir=$(COMPOSER_ROOT) $(filter-out $@,$(MAKECMDGOALS))
 
 ## drush		:	Executes `drush` command in a specified root site directory.
 ##		For example: make drush "watchdog:show --type=cron"
 .PHONY: drush
 drush:
-	@docker exec -i $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) $(filter-out $@,$(MAKECMDGOALS))
+	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) $(filter-out $@,$(MAKECMDGOALS))
 
 ## phpcs		:	Check codebase with phpcs sniffers to make sure it conforms https://www.drupal.org/docs/develop/standards.
 .PHONY: phpcs
@@ -96,7 +111,7 @@ phpcbf:
 .PHONY: restoredb
 restoredb:pw
 	@echo "\nDeploy `ls *.sql -t | head -n1` db"
-	@docker exec -i $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) sql-cli < `ls *.sql -t | head -n1`
+	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) sql-cli < `ls *.sql -t | head -n1`
 
 ## addsettings	:	Compile settings.php.
 .PHONY: addsettings
@@ -122,7 +137,7 @@ addsettings:
 .PHONY: coin
 coin:
 	@echo "\nСomposer install"
-	@docker exec $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") composer --working-dir=$(COMPOSER_ROOT) install
+	@docker exec --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") composer --working-dir=$(COMPOSER_ROOT) install
 
 ## ps		:	List running containers.
 .PHONY: ps
@@ -132,7 +147,7 @@ ps:
 ## shell		:	Access `php` container via shell.
 .PHONY: shell
 shell:
-	docker exec -ti -e COLUMNS=$(shell tput cols) -e LINES=$(shell tput lines) $(shell docker ps --filter name='$(PROJECT_NAME)_php' --format "{{ .ID }}") sh
+	docker exec -ti --user $(CUID):$(CGID) -e  COLUMNS=$(shell tput cols) -e LINES=$(shell tput lines) $(shell docker ps --filter name='$(PROJECT_NAME)_php' --format "{{ .ID }}") sh
 
 ## logs		:	View containers logs.
 .PHONY: logs
