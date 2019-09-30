@@ -20,12 +20,12 @@ help : Makefile
 	@sed -n 's/^##//p' $<
 endif
 
-## info		:	About the project.
+## info		:	About the project and site URL.
 .PHONY: info
 info: url
 	@grep -v '^ *#\|^ *$$' .env | head -n15
 
-## url		:	Site URL.
+# url		:	Site URL.
 .PHONY: url
 url:
 	@echo "\nSite URL is $(PROJECT_BASE_URL):$(PORT)\n"
@@ -44,7 +44,7 @@ hook:
 	chmod +x .git/hooks/pre-commit
 
 # upnewsite	:	Deployment drupal 8.
-#		Start up containers > Сomposer install > Compile settings.php
+#		Start up containers > Сomposer install > Compile settings.php > Drush install site
 .PHONY: upnewsite
 upnewsite: up coin addsettings druinsi url
 
@@ -131,7 +131,7 @@ addsettings:
 	@echo "  'namespace' => 'Drupal\\\\\\\Core\\\\\\\Database\\\\\\\Driver\\\\\\\mysql'," >> $(SETTINGS_ROOT)/settings.php
 	@echo "  'driver' => '$(DB_DRIVER)'," >> $(SETTINGS_ROOT)/settings.php
 	@echo ");" >> $(SETTINGS_ROOT)/settings.php
-	@sleep 10
+	@sleep 5
 
 ## coin		:	Сomposer install.
 .PHONY: coin
