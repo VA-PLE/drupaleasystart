@@ -23,7 +23,7 @@ endif
 ## info		:	About the project.
 .PHONY: info
 info: url
-	@grep -v '^ *#\|^ *$$' .env
+	@grep -v '^ *#\|^ *$$' .env | head -n15
 
 ## url		:	Site URL.
 .PHONY: url
