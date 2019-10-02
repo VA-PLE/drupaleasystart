@@ -52,7 +52,7 @@ node:
 .PHONY: upnewsite
 upnewsite:
 	git clone -b 8.x git@github.com:drupal-composer/drupal-project.git
-	cp -a -f {drupal-project/drush,drupal-project/scripts,drupal-project/composer.json,drupal-project/load.environment.php} .
+	@cp -a -f drupal-project/drush drupal-project/scripts drupal-project/composer.json drupal-project/load.environment.php .
 	rm -rf drupal-project
 	@echo "\nEdit .env file and run up8"
 
