@@ -49,9 +49,12 @@ node:
 	docker start $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}")
 
 # upnewsite	:	Deployment drupal 8.
-#		Start up containers > Сomposer install > Compile settings.php > Drush install site
 .PHONY: upnewsite
-upnewsite: up coin addsettings druinsi url
+upnewsite:
+	git clone -b 8.x git@github.com:drupal-composer/drupal-project.git
+	cp -a -f {drupal-project/drush,drupal-project/scripts,drupal-project/composer.json,drupal-project/load.environment.php} .
+	rm -rf drupal-project
+	@echo "\nEdit .env file and run up8"
 
 ## up8		:	Deploying local site. For drupal 8.
 ##		Start up containers > Сomposer install > Compile settings.php > Mounting database
@@ -113,7 +116,7 @@ phpcbf:
 ## restoredb	:	Mounts last modified sql database file from root dir.
 .PHONY: restoredb
 restoredb:pw
-	@echo "\nDeploy `ls *.sql -t | head -n1` db"
+	@echo "\nDeploy `ls *.sql -t | head -n1` database"
 	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) sql-cli < `ls *.sql -t | head -n1`
 
 ## addsettings	:	Compile settings.php.
