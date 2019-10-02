@@ -38,10 +38,9 @@ up:
 
 .PHONY: hook
 hook:
-	touch .git/hooks/pre-commit
-	@echo "#!/bin/bash" >> .git/hooks/pre-commit
-	@echo "make phpcs" >> .git/hooks/pre-commit
-	chmod +x .git/hooks/pre-commit
+	@touch .git/hooks/pre-commit
+	@echo "#!/bin/bash\nmake phpcs" >> .git/hooks/pre-commit
+	@chmod +x .git/hooks/pre-commit
 
 ## node           :       Up node container and run "yarn install && yarn run start".
 .PHONY: node
@@ -51,9 +50,9 @@ node:
 # upnewsite	:	Deployment drupal 8.
 .PHONY: upnewsite
 upnewsite:
-	git clone -b 8.x git@github.com:drupal-composer/drupal-project.git
+	@git clone -b 8.x git@github.com:drupal-composer/drupal-project.git
 	@cp -a -f drupal-project/drush drupal-project/scripts drupal-project/composer.json drupal-project/load.environment.php .
-	rm -rf drupal-project
+	@rm -rf drupal-project
 	@echo "\nEdit .env file and run up8"
 
 ## up8		:	Deploying local site. For drupal 8.
@@ -73,7 +72,6 @@ up7: up addsettings restoredb url
 druinsi:
 	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) si -y standard --account-name=$(DRUPALADMIN) --account-pass=$(DRUPALLPASS)
 	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) cset system.site uuid c7635c29-335d-4655-b2b6-38cb111042d9
-
 
 ## start		:	Start containers without updating.
 .PHONY: start
@@ -106,12 +104,12 @@ drush:
 ## phpcs		:	Check codebase with phpcs sniffers to make sure it conforms https://www.drupal.org/docs/develop/standards.
 .PHONY: phpcs
 phpcs:
-	docker run --rm -v $(shell pwd)/$(SITE_ROOT)profiles:/work/profile -v $(shell pwd)/$(SITE_ROOT)modules/custom:/work/modules -v $(shell pwd)/$(SITE_ROOT)themes/custom:/work/themes vaple/phpcodesniffer:19.10 phpcs --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme --ignore="*.features.*,*.pages*.inc" --colors .
+	docker run --rm -v $(shell pwd)/$(SITE_ROOT)profiles:/work/profile -v $(shell pwd)/$(SITE_ROOT)modules/custom:/work/modules -v $(shell pwd)/$(SITE_ROOT)themes/custom:/work/themes $(CODETESTER) phpcs --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme --ignore="*.features.*,*.pages*.inc" --colors .
 
 ## phpcbf		:	Fix codebase according to Drupal standards https://www.drupal.org/docs/develop/standards.
 .PHONY: phpcbf
 phpcbf:
-	docker run --rm -v $(shell pwd)/$(SITE_ROOT)profiles:/work/profile -v $(shell pwd)/$(SITE_ROOT)modules/custom:/work/modules -v $(shell pwd)/$(SITE_ROOT)themes/custom:/work/themes vaple/phpcodesniffer:19.10 phpcbf --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme --ignore="*.features.*,*.pages*.inc" --colors .
+	docker run --rm -v $(shell pwd)/$(SITE_ROOT)profiles:/work/profile -v $(shell pwd)/$(SITE_ROOT)modules/custom:/work/modules -v $(shell pwd)/$(SITE_ROOT)themes/custom:/work/themes $(CODETESTER) phpcbf --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme --ignore="*.features.*,*.pages*.inc" --colors .
 
 ## restoredb	:	Mounts last modified sql database file from root dir.
 .PHONY: restoredb
