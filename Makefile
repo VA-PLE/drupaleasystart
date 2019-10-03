@@ -45,7 +45,7 @@ hook:
 ## node           :       Up node container and run "yarn install && yarn run start".
 .PHONY: node
 node:
-	docker start $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}")
+	docker run --rm --entrypoint bash -v $(shell pwd)/:/var/www/html -w /var/www/html/path/to/theme/to/build wodby/node:$(NODE_TAG) -c "yarn install && yarn --version && yarn run start"
 
 # upnewsite	:	Deployment drupal 8.
 .PHONY: upnewsite
