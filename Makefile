@@ -1,7 +1,5 @@
 include .env
 
-default: help
-
 # Get user/group id to manage permissions between host and containers.
 LOCAL_UID := $(shell id -u)
 LOCAL_GID := $(shell id -g)
@@ -12,66 +10,30 @@ CGID ?= $(LOCAL_GID)
 
 ## help		:	Print commands help.
 .PHONY: help
-ifneq (,$(wildcard docker.mk))
-help : docker.mk
-	@sed -n 's/^##//p' $<
-else
 help : Makefile
 	@sed -n 's/^##//p' $<
-endif
 
 ## info		:	About the project and site URL.
 .PHONY: info
 info: url
 	@grep -v '^ *#\|^ *$$' .env | head -n17
 
-# url		:	Site URL.
-.PHONY: url
-url:
-	@echo "\nSite URL is $(PROJECT_BASE_URL):$(PORT)\n"
-
+##
+## up		:	Re-create containers or starting up only containers.
 .PHONY: up
 up:
 	@echo "Starting up containers for $(PROJECT_NAME)..."
 	docker-compose pull
 	docker-compose up -d --remove-orphans
 
-.PHONY: hook
-hook:
-	@touch .git/hooks/pre-commit
-	@echo "#!/bin/bash\nmake phpcs" >> .git/hooks/pre-commit
-	@chmod +x .git/hooks/pre-commit
-
-## node           :       Up node container and run "yarn install && yarn run start".
-.PHONY: node
-node:
-	docker run --rm --entrypoint bash -v $(shell pwd)/:/var/www/html -w /var/www/html/path/to/theme/to/build wodby/node:$(NODE_TAG) -c "yarn install && yarn --version && yarn run start"
-
-# upnewsite	:	Deployment drupal 8.
+## upnewsite	:	Deployment local vanilla drupal 8.
 .PHONY: upnewsite
-upnewsite:
-	@git clone -b 8.x git@github.com:drupal-composer/drupal-project.git
-	@cp -a -f drupal-project/drush drupal-project/scripts drupal-project/composer.json drupal-project/load.environment.php .
-	@rm -rf drupal-project
-	@echo "\nEdit .env file and run up8"
+upnewsite: gitclone up coin addsettings druinsi url
 
-## up8		:	Deploying local site. For drupal 8.
-##		Start up containers > Сomposer install > Compile settings.php > Mounting database
-.PHONY: up8
-up8: up coin addsettings druinsi hook url
-	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) ev '\Drupal::entityManager()->getStorage("shortcut_set")->load("default")->delete();'
-	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) cim -y
-
-# up7		:	Deploying local site. For drupal 7.
-#		Start up containers > Compile settings.php > Mounting database
-.PHONY: up7
-up7: up addsettings restoredb url
-
-# druinsi		:	Drush install site.
-.PHONY: druinsi
-druinsi:
-	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) si -y standard --account-name=$(DRUPALADMIN) --account-pass=$(DRUPALLPASS)
-	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) cset system.site uuid c7635c29-335d-4655-b2b6-38cb111042d9
+## upsite		:	Automatic deploy local site.
+#default up coin addsettings (druinsi drusim)_or_(restoredb) hook url
+.PHONY: upsite
+upsite: up coin addsettings druinsi drusim hook url
 
 ## start		:	Start containers without updating.
 .PHONY: start
@@ -85,11 +47,11 @@ stop:
 	@echo "Stopping containers for $(PROJECT_NAME)..."
 	@docker-compose stop
 
-## prune		:	Remove containers and their volumes.
-.PHONY: prune
-prune:
-	@echo "Removing containers for $(PROJECT_NAME)..."
-	@docker-compose down -v $(filter-out $@,$(MAKECMDGOALS))
+##
+## shell		:	Access `php` container via shell.
+.PHONY: shell
+shell:
+	docker exec -ti --user $(CUID):$(CGID) -e  COLUMNS=$(shell tput cols) -e LINES=$(shell tput lines) $(shell docker ps --filter name='$(PROJECT_NAME)_php' --format "{{ .ID }}") sh
 
 ## composer	:	Executes `composer` command in a specified `COMPOSER_ROOT` directory. Example: make composer "update drupal/core --with-dependencies"
 .PHONY: composer
@@ -111,13 +73,54 @@ phpcs:
 phpcbf:
 	docker run --rm -v $(shell pwd)/$(SITE_ROOT)profiles:/work/profile -v $(shell pwd)/$(SITE_ROOT)modules/custom:/work/modules -v $(shell pwd)/$(SITE_ROOT)themes/custom:/work/themes $(CODETESTER) phpcbf --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme --ignore="*.features.*,*.pages*.inc" --colors .
 
-## restoredb	:	Mounts last modified sql database file from root dir.
+## node		:       Up node container and run "yarn install && yarn run start".
+.PHONY: node
+node:
+	docker run --rm --entrypoint bash -it -v $(shell pwd)/:/var/www/html -w /var/www/html/frontend wodby/node:$(NODE_TAG) -c "yarn install && yarn build && rm -rf /var/www/html/frontend/node_modules && rm -rf frontend/node_modules"
+
+##
+## ps		:	List running containers.
+.PHONY: ps
+ps:
+	@docker ps --filter name='$(PROJECT_NAME)*'
+
+## logs		:	View containers logs.
+.PHONY: logs
+logs:
+	@docker-compose logs -f $(filter-out $@,$(MAKECMDGOALS))
+
+## prune		:	Remove containers and their volumes.
+.PHONY: prune
+prune:
+	@echo "Removing containers for $(PROJECT_NAME)..."
+	@docker-compose down -v $(filter-out $@,$(MAKECMDGOALS))
+
+#url		:	Site URL.
+.PHONY: url
+url:
+	@echo "\nSite URL is $(PROJECT_BASE_URL):$(PORT)\n"
+
+#hook		:	Add pre-commit hook.
+.PHONY: hook
+hook:
+	@touch .git/hooks/pre-commit
+	@echo "#!/bin/bash\nmake phpcs" >> .git/hooks/pre-commit
+	@chmod +x .git/hooks/pre-commit
+
+#gitclone	:	Gitclone vanilla drupal 8 project.
+.PHONY: gitclone
+gitclone:
+	@git clone -b 8.x https://github.com/drupal-composer/drupal-project.git
+	@cp -a -f drupal-project/drush drupal-project/scripts drupal-project/composer.json drupal-project/load.environment.php .
+	@rm -rf drupal-project
+
+#restoredb	:	Mounts last modified sql database file from root dir.
 .PHONY: restoredb
 restoredb:pw
 	@echo "\nDeploy `ls *.sql -t | head -n1` database"
 	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) sql-cli < `ls *.sql -t | head -n1`
 
-## addsettings	:	Compile settings.php.
+#addsettings	:	Compile settings.php.
 .PHONY: addsettings
 addsettings:
 	@echo "\nCompile settings.php."
@@ -137,27 +140,22 @@ addsettings:
 	@echo ");" >> $(SETTINGS_ROOT)/settings.php
 	@sleep 5
 
-## coin		:	Сomposer install.
+#coin		:	Сomposer install.
 .PHONY: coin
 coin:
 	@echo "\nСomposer install"
 	@docker exec --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") composer --working-dir=$(COMPOSER_ROOT) install
 
-## ps		:	List running containers.
-.PHONY: ps
-ps:
-	@docker ps --filter name='$(PROJECT_NAME)*'
+#drusim		:	Import configs.
+.PHONY: drusim
+drusim:
+	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) ev '\Drupal::entityManager()->getStorage("shortcut_set")->load("default")->delete();'
+	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) cim -y
 
-## shell		:	Access `php` container via shell.
-.PHONY: shell
-shell:
-	docker exec -ti --user $(CUID):$(CGID) -e  COLUMNS=$(shell tput cols) -e LINES=$(shell tput lines) $(shell docker ps --filter name='$(PROJECT_NAME)_php' --format "{{ .ID }}") sh
-
-## logs		:	View containers logs.
-.PHONY: logs
-logs:
-	@docker-compose logs -f $(filter-out $@,$(MAKECMDGOALS))
-
-# https://stackoverflow.com/a/6273809/1826109
+#druinsi		:	Drush install site.
+.PHONY: druinsi
+druinsi:
+	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) si -y standard --account-name=$(DRUPALADMIN) --account-pass=$(DRUPALLPASS)
+	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) cset system.site uuid c7635c29-335d-4655-b2b6-38cb111042d9
 %:
 	@:
