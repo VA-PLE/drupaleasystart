@@ -138,7 +138,7 @@ addsettings:
 	@echo "  'namespace' => 'Drupal\\\\\\\Core\\\\\\\Database\\\\\\\Driver\\\\\\\mysql'," >> $(SETTINGS_ROOT)/settings.php
 	@echo "  'driver' => '$(DB_DRIVER)'," >> $(SETTINGS_ROOT)/settings.php
 	@echo ");" >> $(SETTINGS_ROOT)/settings.php
-	@sleep 5
+	@sleep 9
 
 #coin		:	Сomposer install.
 .PHONY: coin
