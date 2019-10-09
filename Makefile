@@ -66,17 +66,17 @@ drush:
 ## phpcs		:	Check codebase with phpcs sniffers to make sure it conforms https://www.drupal.org/docs/develop/standards.
 .PHONY: phpcs
 phpcs:
-	docker run --rm -v $(shell pwd)/$(SITE_ROOT)profiles:/work/profile -v $(shell pwd)/$(SITE_ROOT)modules/custom:/work/modules -v $(shell pwd)/$(SITE_ROOT)themes/custom:/work/themes $(CODETESTER) phpcs --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme --ignore="*.features.*,*.pages*.inc" --colors .
+	docker run --rm -v $(shell pwd)/$(SITE_ROOT)profiles:/work/profile -v $(shell pwd)/$(SITE_ROOT)modules:/work/modules -v $(shell pwd)/$(SITE_ROOT)themes:/work/themes $(CODETESTER) phpcs --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme --ignore="*/contrib/*,*.features.*,*.pages*.inc" --colors .
 
 ## phpcbf		:	Fix codebase according to Drupal standards https://www.drupal.org/docs/develop/standards.
 .PHONY: phpcbf
 phpcbf:
-	docker run --rm -v $(shell pwd)/$(SITE_ROOT)profiles:/work/profile -v $(shell pwd)/$(SITE_ROOT)modules/custom:/work/modules -v $(shell pwd)/$(SITE_ROOT)themes/custom:/work/themes $(CODETESTER) phpcbf --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme --ignore="*.features.*,*.pages*.inc" --colors .
+	docker run --rm -v $(shell pwd)/$(SITE_ROOT)profiles:/work/profile -v $(shell pwd)/$(SITE_ROOT)modules:/work/modules -v $(shell pwd)/$(SITE_ROOT)themes:/work/themes $(CODETESTER) phpcbf --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme --ignore="*/contrib/*,*.features.*,*.pages*.inc" --colors .
 
 ## node		:       Up node container and run "yarn install && yarn run start".
 .PHONY: node
 node:
-	docker run --rm --entrypoint bash -it -v $(shell pwd)/:/var/www/html -w /var/www/html/frontend wodby/node:$(NODE_TAG) -c "yarn install && yarn build && rm -rf /var/www/html/frontend/node_modules && rm -rf frontend/node_modules"
+	docker run --rm --entrypoint bash -i -v $(shell pwd)/:/var/www/html -w /var/www/html/frontend wodby/node:$(NODE_TAG) -c "yarn install && yarn build && rm -rf /var/www/html/frontend/node_modules && rm -rf frontend/node_modules"
 
 ##
 ## ps		:	List running containers.
