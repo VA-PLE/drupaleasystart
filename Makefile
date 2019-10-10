@@ -10,8 +10,8 @@ CGID ?= $(LOCAL_GID)
 
 ## help		:	Print commands help.
 .PHONY: help
-help : Makefile
-	@sed -n 's/^##//p' $<
+help:
+	@sed -n 's/^##//p' Makefile
 
 ## info		:	About the project and site URL.
 .PHONY: info
