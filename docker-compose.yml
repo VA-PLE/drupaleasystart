@@ -19,7 +19,7 @@ services:
     container_name: "${PROJECT_NAME}_php"
     environment:
       PHP_SENDMAIL_PATH: /usr/sbin/sendmail -t -i -S mailhog:1025
-#      PHP_SENDMAIL_PATH: /usr/sbin/sendmail -t -i -S opensmtpd:25      
+#      PHP_SENDMAIL_PATH: /usr/sbin/sendmail -t -i -S opensmtpd:25
       DB_HOST: $DB_HOST
       DB_USER: $DB_USER
       DB_PASSWORD: $DB_PASSWORD
@@ -65,6 +65,7 @@ services:
 #      - ./:/var/www/html:cached # User-guided caching
 #      - docker-sync:/var/www/html # Docker-sync
     labels:
+      - "traefik.enable=true"
       - "traefik.http.routers.${PROJECT_NAME}_nginx.rule=Host(`${PROJECT_BASE_URL}`)"
 
 #  mailhog:

@@ -13,6 +13,8 @@ CGID ?= $(LOCAL_GID)
 help:
 	@sed -n 's/^##//p' Makefile
 	@sed -n 's/^##//p' file.mk
+	@sed -n 's/^##//p' front.mk
+
 
 include file.mk
 include front.mk
@@ -77,10 +79,6 @@ phpcs:
 phpcbf:
 	docker run --rm -v $(shell pwd)/$(SITE_ROOT)profiles:/work/profiles -v $(shell pwd)/$(SITE_ROOT)modules:/work/modules -v $(shell pwd)/$(SITE_ROOT)themes:/work/themes $(CODETESTER) phpcbf --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme --ignore="*/contrib/*,*.features.*,*.pages*.inc" --colors .
 
-## yarn		:       Up frontend container and run your command. Example: make yarn build.
-.PHONY: yarn
-yarn: frontend
-
 ##
 ## ps		:	List running containers.
 .PHONY: ps
@@ -119,7 +117,7 @@ gitclone:
 
 #restoredb	:	Mounts last modified sql database file from root dir.
 .PHONY: restoredb
-restoredb:pw
+restoredb:
 	@echo "\nDeploy `ls *.sql -t | head -n1` database"
 	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) sql-cli < `ls *.sql -t | head -n1`
 
@@ -160,5 +158,6 @@ drusim:
 druinsi:
 	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) si -y standard --account-name=$(DRUPALADMIN) --account-pass=$(DRUPALLPASS)
 	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) cset system.site uuid c7635c29-335d-4655-b2b6-38cb111042d9
+
 %:
 	@:
