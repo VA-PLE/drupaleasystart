@@ -16,39 +16,34 @@ front:
 
 ## upsitefront	:	Up frontend site
 .PHONY: upsitefront
-upsitefront: up builddc upfront urlfront
+upsitefront: builddc up urlfront
 
 # urlfront	:	Up frontend site
 .PHONY: urlfront
 urlfront:
-	@echo "\nFrontsite URL is front$(PROJECT_BASE_URL):$(PORT)\n"
+	@echo "\nFrontsite URL is front.$(PROJECT_BASE_URL):$(PORT)\n"
 
 # builddc	:	build front.docker-compose.yml
 .PHONY: builddc
 builddc:
-	@rm -rf front.docker-compose.yml
-	@touch front.docker-compose.yml
-	@echo 'version: "3"' >> front.docker-compose.yml
-	@echo '\nservices:' >> front.docker-compose.yml
-	@echo '  nginx_front:' >> front.docker-compose.yml
-	@echo '    image: wodby/nginx:${NGINX_TAG}' >> front.docker-compose.yml
-	@echo '    container_name: "${PROJECT_NAME}_nginx_front"' >> front.docker-compose.yml
-	@echo '    environment:' >> front.docker-compose.yml
-	@echo '      NGINX_STATIC_OPEN_FILE_CACHE: "off"' >> front.docker-compose.yml
-	@echo '      NGINX_ERROR_LOG_LEVEL: debug' >> front.docker-compose.yml
-	@echo '      NGINX_BACKEND_HOST: php' >> front.docker-compose.yml
-	@echo '      NGINX_SERVER_ROOT: ${COMPOSER_ROOT}/${FRONT_ROOT_DIR}' >> front.docker-compose.yml
-	@echo '      NGINX_FASTCGI_INDEX: index.html' >> front.docker-compose.yml
-	@echo '    volumes:' >> front.docker-compose.yml
-	@echo '      - ./:/var/www/html' >> front.docker-compose.yml
-	@echo '    labels:' >> front.docker-compose.yml
-	@echo '      - "traefik.enable=true"' >> front.docker-compose.yml
-	@echo '      - "traefik.http.routers.${PROJECT_NAME}_nginx_front.rule=Host(`front${PROJECT_BASE_URL}`)"' >> front.docker-compose.yml
-
-# upfront	:	Up frontend container
-.PHONY: upfront
-upfront:
-	@docker-compose -f front.docker-compose.yml up -d
+	@rm -rf docker-compose.override.yml
+	@touch docker-compose.override.yml
+	@echo 'version: "3"' >> docker-compose.override.yml
+	@echo '\nservices:' >> docker-compose.override.yml
+	@echo '  nginx_front:' >> docker-compose.override.yml
+	@echo '    image: wodby/nginx:${NGINX_TAG}' >> docker-compose.override.yml
+	@echo '    container_name: "${PROJECT_NAME}_nginx_front"' >> docker-compose.override.yml
+	@echo '    environment:' >> docker-compose.override.yml
+	@echo '      NGINX_STATIC_OPEN_FILE_CACHE: "off"' >> docker-compose.override.yml
+	@echo '      NGINX_ERROR_LOG_LEVEL: debug' >> docker-compose.override.yml
+	@echo '      NGINX_BACKEND_HOST: php' >> docker-compose.override.yml
+	@echo '      NGINX_SERVER_ROOT: ${COMPOSER_ROOT}/${FRONT_ROOT_DIR}' >> docker-compose.override.yml
+	@echo '      NGINX_FASTCGI_INDEX: index.html' >> docker-compose.override.yml
+	@echo '    volumes:' >> docker-compose.override.yml
+	@echo '      - ./:/var/www/html' >> docker-compose.override.yml
+	@echo '    labels:' >> docker-compose.override.yml
+	@echo '      - "traefik.enable=true"' >> docker-compose.override.yml
+	@echo '      - "traefik.http.routers.${PROJECT_NAME}_nginx_front.rule=Host(`front.${PROJECT_BASE_URL}`)"' >> docker-compose.override.yml
 
 %:
 	@:

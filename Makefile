@@ -12,9 +12,8 @@ CGID ?= $(LOCAL_GID)
 .PHONY: help
 help:
 	@sed -n 's/^##//p' Makefile
-	@sed -n 's/^##//p' file.mk
 	@sed -n 's/^##//p' front.mk
-
+	@sed -n 's/^##//p' file.mk
 
 include file.mk
 include front.mk
@@ -57,7 +56,7 @@ stop:
 ## shell		:	Access `php` container via shell.
 .PHONY: shell
 shell:
-	docker exec -ti --user $(CUID):$(CGID) -e  COLUMNS=$(shell tput cols) -e LINES=$(shell tput lines) $(shell docker ps --filter name='$(PROJECT_NAME)_php' --format "{{ .ID }}") sh
+	docker exec -ti --user $(CUID):$(CGID) -e COLUMNS=$(shell tput cols) -e LINES=$(shell tput lines) $(shell docker ps --filter name='$(PROJECT_NAME)_php' --format "{{ .ID }}") sh
 
 ## composer	:	Executes `composer` command in a specified `COMPOSER_ROOT` directory. Example: make composer "update drupal/core --with-dependencies"
 .PHONY: composer
@@ -105,7 +104,7 @@ url:
 .PHONY: hook
 hook:
 	@touch .git/hooks/pre-commit
-	@echo "#!/bin/bash\nmake phpcs" >> .git/hooks/pre-commit
+	@echo "#!/bin/bash\nmake phpcs" > .git/hooks/pre-commit
 	@chmod +x .git/hooks/pre-commit
 
 #gitclone	:	Gitclone vanilla drupal 8 project.
@@ -113,6 +112,8 @@ hook:
 gitclone:
 	@git clone -b 8.x https://github.com/drupal-composer/drupal-project.git
 	@cp -a -f drupal-project/drush drupal-project/scripts drupal-project/composer.json drupal-project/load.environment.php .
+	@sed 'N;$$!P;$$!D;$$d' drupal-project/.gitignore > .gitignore
+	@echo "docker-compose.override.yml\n*.tar\n*.tar.gz\n*.sql\n*.sql.gz" >> .gitignore
 	@rm -rf drupal-project
 
 #restoredb	:	Mounts last modified sql database file from root dir.
