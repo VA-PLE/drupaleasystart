@@ -23,12 +23,10 @@ upsitefront: builddc up urlfront
 urlfront:
 	@echo "\nFrontsite URL is front.$(PROJECT_BASE_URL):$(PORT)\n"
 
-# builddc	:	build front.docker-compose.yml
+# builddc	:	build docker-compose.override.yml
 .PHONY: builddc
 builddc:
-	@rm -rf docker-compose.override.yml
-	@touch docker-compose.override.yml
-	@echo 'version: "3"' >> docker-compose.override.yml
+	@echo 'version: "3"' > docker-compose.override.yml
 	@echo '\nservices:' >> docker-compose.override.yml
 	@echo '  nginx_front:' >> docker-compose.override.yml
 	@echo '    image: wodby/nginx:${NGINX_TAG}' >> docker-compose.override.yml
