@@ -12,7 +12,8 @@ infofront: urlfront
 ## front		:	Up frontend container and run your command. Example: make front yarn build, or: make front "npm install && npm run build"
 .PHONY: front
 front:
-	docker run --rm --entrypoint bash -i -v $(shell pwd)/:/var/www/html -w /var/www/html/$(THEMES_ROOT) wodby/node:$(NODE_TAG) -c "$(filter-out $@,$(MAKECMDGOALS)) && rm -rf /var/www/html/$(THEMES_ROOT)/node_modules"
+	docker run --rm --entrypoint bash -i -v $(shell pwd)/:/var/www/html -w /var/www/html/$(THEMES_ROOT) wodby/node:$(NODE_TAG) -c "$(filter-out $@,$(MAKECMDGOALS))"
+#	docker run --rm --entrypoint bash -i -v $(shell pwd)/:/var/www/html -w /var/www/html/$(THEMES_ROOT) wodby/node:$(NODE_TAG) -c "$(filter-out $@,$(MAKECMDGOALS)) && rm -rf /var/www/html/$(THEMES_ROOT)/node_modules"
 
 ## upsitefront	:	Up frontend site
 .PHONY: upsitefront
