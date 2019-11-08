@@ -8,7 +8,7 @@ LOCAL_GID := $(shell id -g)
 CUID ?= $(LOCAL_UID)
 CGID ?= $(LOCAL_GID)
 
-# help		:	Print commands help.
+#help		:	Print commands help.
 .PHONY: help
 help:
 	@sed -n 's/^##//p' Makefile
