@@ -9,22 +9,21 @@ FRONT_ROOT_DIR=frontend/dist
 infofront: urlfront
 	@echo "Frontend container wodby/node:$(NODE_TAG)"
 
-## front		:	Up frontend container and run your command. Example: make front yarn build, or: make front "npm install && npm run build"
+## front		:	Up frontend container and run your command. Example: make front yarn build, or: make front "npm install && npm run build".
 .PHONY: front
 front:
 	docker run --rm --entrypoint bash -i -v $(shell pwd)/:/var/www/html -w /var/www/html/$(THEMES_ROOT) wodby/node:$(NODE_TAG) -c "$(filter-out $@,$(MAKECMDGOALS))"
-#	docker run --rm --entrypoint bash -i -v $(shell pwd)/:/var/www/html -w /var/www/html/$(THEMES_ROOT) wodby/node:$(NODE_TAG) -c "$(filter-out $@,$(MAKECMDGOALS)) && rm -rf /var/www/html/$(THEMES_ROOT)/node_modules"
 
-## upsitefront	:	Up frontend site
+## upsitefront	:	Up frontend site.
 .PHONY: upsitefront
 upsitefront: builddc up urlfront
 
-# urlfront	:	Up frontend site
+#urlfront	:	URL frontend site.
 .PHONY: urlfront
 urlfront:
 	@echo "\nFrontsite URL is front.$(PROJECT_BASE_URL):$(PORT)\n"
 
-# builddc	:	build docker-compose.override.yml
+#builddc	:	build docker-compose.override.yml.
 .PHONY: builddc
 builddc:
 	@echo 'version: "3"' > docker-compose.override.yml

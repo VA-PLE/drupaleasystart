@@ -1,10 +1,10 @@
 include .env
 
-# Get user/group id to manage permissions between host and containers.
+#Get user/group id to manage permissions between host and containers.
 LOCAL_UID := $(shell id -u)
 LOCAL_GID := $(shell id -g)
 
-# Evaluate recursively.
+#Evaluate recursively.
 CUID ?= $(LOCAL_UID)
 CGID ?= $(LOCAL_GID)
 
@@ -31,12 +31,12 @@ up:
 	docker-compose pull
 	docker-compose up -d --remove-orphans
 
-## upnewsite	:	Deployment local vanilla drupal 8.
+## upnewsite	:	Deployment local Drupal 8.
 .PHONY: upnewsite
 upnewsite: gitclone up coin addsettings druinsi url
 
 ## upsite		:	Automatic deploy local site.
-#default up coin addsettings (druinsi drusim)_or_(restoredb) hook url
+#default for new Drupal 8 sites: up coin addsettings (druinsi drusim)_or_(restoredb) hook url
 .PHONY: upsite
 upsite: up coin addsettings druinsi drusim hook url
 
@@ -58,12 +58,12 @@ stop:
 shell:
 	docker exec -ti --user $(CUID):$(CGID) -e COLUMNS=$(shell tput cols) -e LINES=$(shell tput lines) $(shell docker ps --filter name='$(PROJECT_NAME)_php' --format "{{ .ID }}") sh
 
-## composer	:	Executes `composer` command in a specified `COMPOSER_ROOT` directory. Example: make composer "update drupal/core --with-dependencies"
+## composer	:	Executes `composer` command in a specified `COMPOSER_ROOT` directory. Example: make composer "update drupal/core --with-dependencies".
 .PHONY: composer
 composer:
 	docker exec --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") composer --working-dir=$(COMPOSER_ROOT) $(filter-out $@,$(MAKECMDGOALS))
 
-## drush		:	Executes `drush` command in a specified root site directory. Example: make drush "watchdog:show --type=cron"
+## drush		:	Executes `drush` command in a specified root site directory. Example: make drush "watchdog:show --type=cron".
 .PHONY: drush
 drush:
 	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) $(filter-out $@,$(MAKECMDGOALS))
@@ -100,14 +100,14 @@ prune:
 url:
 	@echo "\nSite URL is $(PROJECT_BASE_URL):$(PORT)\n"
 
-#hook		:	Add pre-commit hook.
+#hook		:	Add pre-commit hook. [pre-commit hook for test code]
 .PHONY: hook
 hook:
 	@touch .git/hooks/pre-commit
 	@echo "#!/bin/bash\nmake phpcs" > .git/hooks/pre-commit
 	@chmod +x .git/hooks/pre-commit
 
-#gitclone	:	Gitclone vanilla drupal 8 project.
+#gitclone	:	Gitclone Composer template for Drupal 8 project.
 .PHONY: gitclone
 gitclone:
 	@git clone -b 8.x https://github.com/drupal-composer/drupal-project.git
@@ -122,10 +122,10 @@ restoredb:
 	@echo "\nDeploy `ls *.sql -t | head -n1` database"
 	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) sql-cli < `ls *.sql -t | head -n1`
 
-#addsettings	:	Compile settings.php.
+#addsettings	:	Сreate settings.php.
 .PHONY: addsettings
 addsettings:
-	@echo "\nCompile settings.php."
+	@echo "\nСreate settings.php"
 	@cp -f $(SETTINGS_ROOT)/default.settings.php $(SETTINGS_ROOT)/settings.php
 	@echo '$$settings["hash_salt"] = "randomnadich";' >> $(SETTINGS_ROOT)/settings.php
 	@echo '$$config_directories["sync"] = "config/sync";' >> $(SETTINGS_ROOT)/settings.php
