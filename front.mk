@@ -1,18 +1,20 @@
 include .env
 
-THEMES_ROOT=frontend
-FRONT_ROOT_DIR=frontend/dist
+FRONT_ROOT_DIR=frontend
+FRONT_INDEX_DIR=frontend/dist
 
 ##
 ## infofront	:	About the frontproject and site URL.
 .PHONY: infofront
 infofront: urlfront
-	@echo "Frontend container wodby/node:$(NODE_TAG)"
+	@echo "FRONT_ROOT_DIR=$(FRONT_ROOT_DIR)"
+	@echo "FRONT_INDEX_DIR=$(FRONT_INDEX_DIR)"
+	@echo "\nFrontend container wodby/node:$(NODE_TAG)"
 
 ## front		:	Up frontend container and run your command. Example: make front yarn build, or: make front "npm install && npm run build".
 .PHONY: front
 front:
-	docker run --rm --entrypoint bash -i -v $(shell pwd)/:/var/www/html -w /var/www/html/$(THEMES_ROOT) wodby/node:$(NODE_TAG) -c "$(filter-out $@,$(MAKECMDGOALS))"
+	docker run --rm --entrypoint bash -i -v $(shell pwd)/:/var/www/html -w /var/www/html/$(FRONT_ROOT_DIR) wodby/node:$(NODE_TAG) -c "$(filter-out $@,$(MAKECMDGOALS))"
 
 ## upsitefront	:	Up frontend site.
 .PHONY: upsitefront
@@ -35,7 +37,7 @@ builddc:
 	@echo '      NGINX_STATIC_OPEN_FILE_CACHE: "off"' >> docker-compose.override.yml
 	@echo '      NGINX_ERROR_LOG_LEVEL: debug' >> docker-compose.override.yml
 	@echo '      NGINX_BACKEND_HOST: php' >> docker-compose.override.yml
-	@echo '      NGINX_SERVER_ROOT: ${COMPOSER_ROOT}/${FRONT_ROOT_DIR}' >> docker-compose.override.yml
+	@echo '      NGINX_SERVER_ROOT: ${COMPOSER_ROOT}/${FRONT_INDEX_DIR}' >> docker-compose.override.yml
 	@echo '      NGINX_FASTCGI_INDEX: index.html' >> docker-compose.override.yml
 	@echo '    volumes:' >> docker-compose.override.yml
 	@echo '      - ./:/var/www/html' >> docker-compose.override.yml
