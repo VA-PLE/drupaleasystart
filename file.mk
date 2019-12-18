@@ -3,17 +3,22 @@ include .env
 USER=user
 SERVER=ip
 DIR=sitedir
+SSHPARAM=
+RSYNCPARAM=
 
 ##
 ## db		:	Download database.
 .PHONY: db
 db:
-	@ssh $(USER)@$(SERVER) "cd /home/$(USER)/web/$(DIR)/public_html && drush sql-dump" > `date +%m-%d-%Y`.sql
+	@echo "\nCreate a database dump"
+	@ssh $(USER)@$(SERVER) $(SSHPARAM) "cd /home/$(USER)/www/$(DIR) && drush sql-dump" > `date +%d-%m-%Y`.sql
+	@echo "Dump created successfully: `date +%d-%m-%Y`.sql"
 
-## file		:	Download file.
+## file		:	Download files.
 .PHONY: file
 file:
-	@rsync -avvP $(USER)@$(SERVER):/home/$(USER)/web/$(DIR)/public_html/$(SETTINGS_ROOT)/files $(SETTINGS_ROOT)
+	@echo "\nDownload files"
+	@rsync -avvP $(RSYNCPARAM) $(USER)@$(SERVER):/home/$(USER)/www/$(DIR)/$(SETTINGS_ROOT)/files $(SETTINGS_ROOT)
 
 %:
 	@:
