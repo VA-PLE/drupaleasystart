@@ -36,7 +36,7 @@ up:
 upnewsite: gitclone up coin addsettings druinsi url
 
 ## upsite		:	Automatic deploy local site.
-#default for new Drupal 8 sites: up coin addsettings (druinsi drusim)_or_(restoredb) hook url
+#default for new Drupal 8 sites: up coin addsettings (druinsi drusim)_or_(restoredb) hook url.
 .PHONY: upsite
 upsite: up coin addsettings druinsi drusim hook url
 
@@ -100,10 +100,9 @@ prune:
 url:
 	@echo "\nSite URL is $(PROJECT_BASE_URL):$(PORT)\n"
 
-#hook		:	Add pre-commit hook. [pre-commit hook for test code]
+#hook		:	Add pre-commit hook for test code.
 .PHONY: hook
 hook:
-	@touch .git/hooks/pre-commit
 	@echo "#!/bin/bash\nmake phpcs" > .git/hooks/pre-commit
 	@chmod +x .git/hooks/pre-commit
 
@@ -111,7 +110,7 @@ hook:
 .PHONY: gitclone
 gitclone:
 	@git clone -b 8.x https://github.com/drupal-composer/drupal-project.git
-	@cp -a -f drupal-project/drush drupal-project/scripts drupal-project/composer.json drupal-project/load.environment.php .
+	@cp -af drupal-project/drush drupal-project/scripts drupal-project/composer.json drupal-project/load.environment.php .
 	@sed 'N;$$!P;$$!D;$$d' drupal-project/.gitignore > .gitignore
 	@echo "docker-compose.override.yml\n*.tar\n*.tar.gz\n*.sql\n*.sql.gz" >> .gitignore
 	@rm -rf drupal-project
@@ -129,7 +128,6 @@ addsettings:
 	@cp -f $(SETTINGS_ROOT)/default.settings.php $(SETTINGS_ROOT)/settings.php
 	@echo '$$settings["hash_salt"] = "randomnadich";' >> $(SETTINGS_ROOT)/settings.php
 	@echo '$$config_directories["sync"] = "config/sync";' >> $(SETTINGS_ROOT)/settings.php
-	@echo '$$config["system.file"]["path"]["temporary"] = "tmp";' >> $(SETTINGS_ROOT)/settings.php
 	@echo '$$databases["default"]["default"] = array (' >> $(SETTINGS_ROOT)/settings.php
 	@echo "  'database' => '$(DB_NAME)'," >> $(SETTINGS_ROOT)/settings.php
 	@echo "  'username' => '$(DB_USER)'," >> $(SETTINGS_ROOT)/settings.php
