@@ -12,11 +12,11 @@ CGID ?= $(LOCAL_GID)
 .PHONY: help
 help:
 	@sed -n 's/^##//p' Makefile
-	@sed -n 's/^##//p' front.mk
-	@sed -n 's/^##//p' file.mk
+#	@sed -n 's/^##//p' front.mk
+#	@sed -n 's/^##//p' file.mk
 
-include file.mk
-include front.mk
+#include file.mk
+#include front.mk
 
 ## info		:	About the project and site URL.
 .PHONY: info
@@ -31,14 +31,14 @@ up:
 	docker-compose pull
 	docker-compose up -d --remove-orphans
 
-## upnewsite	:	Deployment local Drupal 8.
+## upnewsite	:	Deployment local new Drupal 8 site.
 .PHONY: upnewsite
 upnewsite: gitclone up coin addsettings druinsi url
 
 ## upsite		:	Automatic deploy local site.
-#default for new Drupal 8 sites: up coin addsettings (druinsi drusim)_or_(restoredb) hook url.
+#default for Drupal 8 sites: up coin addsettings (druinsi drusim)_or_(restoredb) url.
 .PHONY: upsite
-upsite: up coin addsettings druinsi drusim hook url
+upsite: up coin addsettings druinsi drusim url
 
 ## start		:	Start containers without updating.
 .PHONY: start
