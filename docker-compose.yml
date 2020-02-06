@@ -137,7 +137,7 @@ services:
 #      - "traefik.http.routers.${PROJECT_NAME}_adminer.rule=Host(`adminer.${PROJECT_BASE_URL}`)"
 
 #  pma:
-#    image: phpmyadmin/phpmyadmin
+#    image: phpmyadmin/phpmyadmin:4.9
 #    container_name: "${PROJECT_NAME}_pma"
 #    environment:
 #      PMA_HOST: $DB_HOST
