@@ -1,6 +1,9 @@
 name: CI
 
-on: [push]
+on:
+  schedule:
+    - cron:  '0 16 * * 5'
+
 
 jobs:
   build:
@@ -11,12 +14,9 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run a multi-line script
       run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
-        make upenv && cat .env
+        make upenv
         git config --global user.email "bot@autoupdate.com"
         git config --global user.name "botautoupdate"
-        git status
         git add .env        
         git commit -am "BOT update .env"
         git push origin next
