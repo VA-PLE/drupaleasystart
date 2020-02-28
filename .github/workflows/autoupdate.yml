@@ -15,8 +15,7 @@ jobs:
       run: |
         echo Add other actions to build,
         echo test, and deploy your project.
-        make upenv
-        cat .env
+        make upenv && cat .env
         git status
 #        git add .env        
 #        git commit -am "BOT update .env"
