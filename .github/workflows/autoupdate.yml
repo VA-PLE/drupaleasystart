@@ -15,6 +15,6 @@ jobs:
         echo test, and deploy your project.
         make upenv && cat .env
         git status
-#        git add .env        
-#        git commit -am "BOT update .env"
-#        git push origin new
+        git add .env        
+        git commit -am "BOT update .env"
+        git push origin new
