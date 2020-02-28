@@ -155,14 +155,14 @@ drusim:
 #druinsi		:	Drush install site.
 .PHONY: druinsi
 druinsi:
-	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) si -y standard --account-name=$(DRUPALADMIN) --account-pass=$(DRUPALLPASS)
+	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) si -y standard --account-name=$(DRUPALADMIN) --account-pass=$(DRUPALPASS)
 	@docker exec -i --user $(CUID):$(CGID) $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) cset system.site uuid c7635c29-335d-4655-b2b6-38cb111042d9
 
 ## upenv		:	Update .env file.
 .PHONY: upenv
 upenv:
 	@mv -f .env .env_backup; wget https://raw.githubusercontent.com/wodby/docker4drupal/master/.env -O temp
-	@sed 9i\ '\\nCOMPOSER_ROOT=/var/www/html\nSITE_ROOT=web/\nSETTINGS_ROOT=$$(SITE_ROOT)sites/default\nPORT=8272\n\nDRUPALADMIN=admin\nDRUPALLPASS=pass' temp > temp2
+	@sed 9i\ '\\nCOMPOSER_ROOT=/var/www/html\nSITE_ROOT=web/\nSETTINGS_ROOT=$$(SITE_ROOT)sites/default\nPORT=8272\n\nDRUPALADMIN=admin\nDRUPALPASS=pass' temp > temp2
 	@sed 26i\ "CODETESTER=vaple/phpcodesniffer:`date +%y.%m`\n" temp2 > .env
 	@rm -f temp temp2
 	@echo "\nCreate .env_backup and update .env file"
