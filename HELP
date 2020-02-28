@@ -1,5 +1,0 @@
-How to install php-extension in docker container:
-	make shell
-	sudo su
-	apk add --update
-	apk add php-extension-name
