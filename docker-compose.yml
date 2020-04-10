@@ -40,6 +40,11 @@ services:
 #      PHP_XDEBUG_REMOTE_HOST: 10.254.254.254 # macOS, Docker < 18.03
 #      PHP_XDEBUG_REMOTE_HOST: 10.0.75.1 # Windows, Docker < 18.03
 #      PHP_XDEBUG_REMOTE_LOG: /tmp/php-xdebug.log
+## PHPUnit Drupal testing configurations
+#      SIMPLETEST_BASE_URL: "http://nginx"
+#      SIMPLETEST_DB: "${DB_DRIVER}://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}#tests_"
+#      MINK_DRIVER_ARGS_WEBDRIVER: '["chrome", {"browserName":"chrome","goog:chromeOptions":{"args":["--disable-gpu","--headless"]}}, "http://chrome:9515"]'
+
     volumes:
       - ./:/var/www/html
 ## For macOS users (https://wodby.com/docs/stacks/drupal/local#docker-for-mac)
@@ -137,14 +142,13 @@ services:
 #      - "traefik.http.routers.${PROJECT_NAME}_adminer.rule=Host(`adminer.${PROJECT_BASE_URL}`)"
 
 #  pma:
-#    image: phpmyadmin/phpmyadmin:4.9
+#    image: phpmyadmin/phpmyadmin
 #    container_name: "${PROJECT_NAME}_pma"
 #    environment:
 #      PMA_HOST: $DB_HOST
 #      PMA_USER: $DB_USER
 #      PMA_PASSWORD: $DB_PASSWORD
-#      PHP_UPLOAD_MAX_FILESIZE: 1G
-#      PHP_MAX_INPUT_VARS: 1G
+#      UPLOAD_LIMIT: 1G
 #    labels:
 #      - "traefik.http.routers.${PROJECT_NAME}_pma.rule=Host(`pma.${PROJECT_BASE_URL}`)"
 
@@ -160,13 +164,10 @@ services:
 #  drupal-node:
 #    image: wodby/drupal-node:$DRUPAL_NODE_TAG
 #    container_name: "${PROJECT_NAME}_drupal_nodejs"
-#    environment:
-#       NODE_SERVICE_KEY: node-service-key
 #    labels:
 #      - "traefik.http.routers.${PROJECT_NAME}_drupal_node.rule=Host(`drupal_node.${PROJECT_BASE_URL}`)"
-#    volumes:
-#      - ./path/to/your/single-page-app:/app
-#    command: sh -c 'npm install && npm run start'
+#    environment:
+#      NODE_SERVICE_KEY: node-service-key
 
 #  memcached:
 #    container_name: "${PROJECT_NAME}_memcached"
@@ -219,6 +220,7 @@ services:
 
 #  elasticsearch:
 #    image: wodby/elasticsearch:$ELASTICSEARCH_TAG
+#    container_name: "${PROJECT_NAME}_elasticsearch"
 #    environment:
 #      ES_JAVA_OPTS: "-Xms500m -Xmx500m"
 #    ulimits:
@@ -228,6 +230,7 @@ services:
 
 #  kibana:
 #    image: wodby/kibana:$KIBANA_TAG
+#    container_name: "${PROJECT_NAME}_kibana"
 #    depends_on:
 #      - elasticsearch
 #    labels:
@@ -240,11 +243,25 @@ services:
 
 #  xhprof:
 #    image: wodby/xhprof:$XHPROF_TAG
+#    container_name: "${PROJECT_NAME}_xhprof"
 #    restart: always
 #    volumes:
 #      - files:/mnt/files
 #    labels:
 #      - "traefik.http.routers.${PROJECT_NAME}_xhprof.rule=Host(`xhprof.${PROJECT_BASE_URL}`)"
+
+#  chrome:
+#    image: selenium/standalone-chrome:$SELENIUM_CHROME_TAG
+#    container_name: "${PROJECT_NAME}_chrome"
+#    volumes:
+#      - /dev/shm:/dev/shm
+#    entrypoint:
+#      - chromedriver
+#      - "--no-sandbox"
+#      - "--disable-dev-shm-usage"
+#      - "--log-path=/tmp/chromedriver.log"
+#      - "--verbose"
+#      - "--whitelisted-ips="
 
 #  portainer:
 #    image: portainer/portainer
