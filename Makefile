@@ -138,12 +138,6 @@ coin:
 	@echo "\nСomposer install"
 	@docker exec $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") composer --working-dir=$(COMPOSER_ROOT) install
 
-#drusim		:	Import configs.
-.PHONY: drusim
-drusim:
-	@docker exec -i $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) ev '\Drupal::entityManager()->getStorage("shortcut_set")->load("default")->delete();'
-	@docker exec -i $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) cim -y
-
 #druinsi		:	Drush install site.
 .PHONY: druinsi
 druinsi:
