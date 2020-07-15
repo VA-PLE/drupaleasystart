@@ -23,14 +23,18 @@ up:
 	docker-compose pull
 	docker-compose up -d --remove-orphans
 
-## upnewsite	:	Deployment local new Drupal 8 site.
-.PHONY: upnewsite
-upnewsite: gitclone up coin addsettings druinsi url
+## upnewsite_D8	:	Deployment local new Drupal 8 site.
+.PHONY: upnewsite_D8
+upnewsite_D8: gitclone8 up coin addsettings druinsi url
+
+## upnewsite_D9	:	Deployment local new Drupal 9 site.
+.PHONY: upnewsite_D9
+upnewsite_D9: gitclone9 up coin addsettings druinsi url
 
 ## upsite		:	Automatic deploy local site.
-#default for Drupal 8 sites: up coin addsettings (druinsi drusim)_or_(restoredb) url.
+#default for Drupal sites: up coin addsettings (restoredb) url.
 .PHONY: upsite
-upsite: up coin addsettings druinsi drusim url
+upsite: up coin addsettings url
 
 ## start		:	Start containers without updating.
 .PHONY: start
@@ -98,14 +102,25 @@ hook:
 	@echo "#!/bin/bash\nmake phpcs" > .git/hooks/pre-commit
 	@chmod +x .git/hooks/pre-commit
 
-#gitclone	:	Gitclone Composer template for Drupal 8 project.
-.PHONY: gitclone
-gitclone:
-	@git clone -b 8.x https://github.com/drupal-composer/drupal-project.git
-	@cp -af drupal-project/drush drupal-project/scripts drupal-project/composer.json drupal-project/load.environment.php .
-	@sed 'N;$$!P;$$!D;$$d' drupal-project/.gitignore > .gitignore
+#gitclone8	:	Gitclone Composer template for Drupal 8 project.
+.PHONY: gitclone8
+gitclone8:
+	@git clone -b 8.x https://github.com/wodby/drupal-vanilla.git
+	@cp -af drupal-vanilla/composer.json drupal-vanilla/composer.lock drupal-vanilla/composer.json .
+	@wget https://raw.githubusercontent.com/drupal-composer/drupal-project/8.x/.gitignore -O drupal-vanilla/.gitignore
+	@sed 'N;$$!P;$$!D;$$d' drupal-vanilla/.gitignore > .gitignore
 	@echo "docker-compose.override.yml\n*.tar\n*.tar.gz\n*.sql\n*.sql.gz" >> .gitignore
-	@rm -rf drupal-project
+	@rm -rf drupal-vanilla
+
+#gitclone9	:	Gitclone Composer template for Drupal 9 project.
+.PHONY: gitclone9
+gitclone9:
+	@git clone -b 9.x https://github.com/wodby/drupal-vanilla.git
+	@cp -af drupal-vanilla/composer.json drupal-vanilla/composer.lock drupal-vanilla/composer.json .
+	@wget https://raw.githubusercontent.com/drupal-composer/drupal-project/8.x/.gitignore -O drupal-vanilla/.gitignore
+	@sed 'N;$$!P;$$!D;$$d' drupal-vanilla/.gitignore > .gitignore
+	@echo "docker-compose.override.yml\n*.tar\n*.tar.gz\n*.sql\n*.sql.gz" >> .gitignore
+	@rm -rf drupal-vanilla
 
 #restoredb	:	Mounts last modified sql database file from root dir.
 .PHONY: restoredb
@@ -119,7 +134,7 @@ addsettings:
 	@echo "\nСreate settings.php"
 	@cp -f $(SETTINGS_ROOT)/default.settings.php $(SETTINGS_ROOT)/settings.php
 	@echo '$$settings["hash_salt"] = "randomnadich";' >> $(SETTINGS_ROOT)/settings.php
-	@echo '$$config_directories["sync"] = "config/sync";' >> $(SETTINGS_ROOT)/settings.php
+	@echo '$$settings["config_sync_directory"] = "config/sync";' >> $(SETTINGS_ROOT)/settings.php
 	@echo '$$databases["default"]["default"] = array (' >> $(SETTINGS_ROOT)/settings.php
 	@echo "  'database' => '$(DB_NAME)'," >> $(SETTINGS_ROOT)/settings.php
 	@echo "  'username' => '$(DB_USER)'," >> $(SETTINGS_ROOT)/settings.php
@@ -131,6 +146,7 @@ addsettings:
 	@echo "  'driver' => '$(DB_DRIVER)'," >> $(SETTINGS_ROOT)/settings.php
 	@echo ");" >> $(SETTINGS_ROOT)/settings.php
 	@sleep 9
+	@mkdir -p $(SITE_ROOT)config $(SITE_ROOT)config/sync
 
 #coin		:	Сomposer install.
 .PHONY: coin
@@ -142,7 +158,7 @@ coin:
 .PHONY: druinsi
 druinsi:
 	@docker exec -i $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) si -y standard --account-name=$(DRUPALADMIN) --account-pass=$(DRUPALPASS)
-	@docker exec -i $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) cset system.site uuid c7635c29-335d-4655-b2b6-38cb111042d9
+#	@docker exec -i $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) cset system.site uuid c7635c29-335d-4655-b2b6-38cb111042d9
 
 ## upenv		:	Update .env file.
 .PHONY: upenv
