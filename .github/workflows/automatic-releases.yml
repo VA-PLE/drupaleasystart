@@ -2,9 +2,9 @@ name: "release"
 
 on:
   push:
-    branches:
-      - "next"
-
+  schedule:
+    - cron:  '0 12 1 * *'
+      
 jobs:
   release:
     name: "Release"
@@ -16,7 +16,7 @@ jobs:
         run: |
           git clone https://github.com/VA-PLE/drupaleasystart.git
           cd drupaleasystart
-          make
+          make upnewsite_D9
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
