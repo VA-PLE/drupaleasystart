@@ -15,8 +15,9 @@ jobs:
       # ...
       - name: "Build & test"
         run: |
-#          git clone https://github.com/VA-PLE/drupaleasystart.git
+          git clone https://github.com/VA-PLE/drupaleasystart.git
 #          cd drupaleasystart && pwd
+          ls -la && pwd
           make info
 
       - uses: "marvinpinto/action-automatic-releases@latest"
@@ -25,7 +26,7 @@ jobs:
           automatic_release_tag: "latest"
 #          automatic_release_tag: Release v1.0.9
           prerelease: false
-          title: "Development Build"
+          title: "Drupal easy start `date +%y.%m`"
           files: |
             LICENSE.txt
             *.jar
