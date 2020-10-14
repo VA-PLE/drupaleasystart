@@ -1,4 +1,3 @@
----
 name: "release"
 
 on:
@@ -17,12 +16,9 @@ jobs:
         run: |
           git clone https://github.com/VA-PLE/drupaleasystart.git
           cd drupaleasystart
-          ls -la && pwd
-          make info
+          make
 
       - uses: "marvinpinto/action-automatic-releases@latest"
-        env:
-          VERSION: "9.9"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest"
