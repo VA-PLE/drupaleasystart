@@ -16,6 +16,7 @@ jobs:
       - name: "Build & test"
         run: |
           git clone https://github.com/VA-PLE/drupaleasystart.git
+          cd drupaleasystart
           ls -la && pwd
           make info
 
