@@ -145,8 +145,8 @@ addsettings:
 	@echo "  'namespace' => 'Drupal\\\\\\\Core\\\\\\\Database\\\\\\\Driver\\\\\\\mysql'," >> $(SETTINGS_ROOT)/settings.php
 	@echo "  'driver' => '$(DB_DRIVER)'," >> $(SETTINGS_ROOT)/settings.php
 	@echo ");" >> $(SETTINGS_ROOT)/settings.php
+	@mkdir -p $(SITE_ROOT)config/sync
 	@sleep 9
-	@mkdir -p $(SITE_ROOT)config $(SITE_ROOT)config/sync
 
 #coin		:	Сomposer install.
 .PHONY: coin
