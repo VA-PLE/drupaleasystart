@@ -7,7 +7,7 @@ on:
       - "next"
 
 jobs:
-  pre-release:
+  release:
     name: "Release"
     runs-on: "ubuntu-latest"
 
@@ -16,14 +16,15 @@ jobs:
       - name: "Build & test"
         run: |
           git clone https://github.com/VA-PLE/drupaleasystart.git
-          cd drupaleasystart
+          cd drupaleasystart && pwd
           make info
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
-          prerelease: true
+#          automatic_release_tag: "latest"
+          automatic_release_tag: Release ${{ github.ref }}
+          prerelease: false
           title: "Development Build"
           files: |
             LICENSE.txt
