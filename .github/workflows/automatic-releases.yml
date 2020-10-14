@@ -20,6 +20,7 @@ jobs:
           make up
           sudo rm -f .gitignore
           make coin
+          sudo chmod 777 . -R
           make addsettings
           make druinsi
           make url
