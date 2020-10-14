@@ -15,6 +15,7 @@ jobs:
       - name: "Test"
         run: |
           git clone https://github.com/VA-PLE/drupaleasystart.git
+          chmod 777 drupaleasystart -R
           cd drupaleasystart
           make upnewsite_D9
 
