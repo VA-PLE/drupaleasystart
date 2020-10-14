@@ -18,7 +18,7 @@ jobs:
           cd drupaleasystart
           make gitclone9
           make up
-          rm .gitignore
+          sudo rm -f .gitignore
           make coin
           make addsettings
           make druinsi
