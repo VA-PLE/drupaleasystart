@@ -25,7 +25,7 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest"
           prerelease: false
-          title: "Drupal easy start `date +%y.%m`"
+          title: Drupal easy start `date +%y.%m`
           files: |
             LICENSE.txt
             *.jar
