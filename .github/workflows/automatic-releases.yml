@@ -21,11 +21,13 @@ jobs:
           make info
 
       - uses: "marvinpinto/action-automatic-releases@latest"
+        env:
+          VERSION: "9.9"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest"
           prerelease: false
-          title: Drupal easy start $(date +%y.%m)
+          title: Drupal easy start "$VERSION"
           files: |
             LICENSE.txt
             *.jar
