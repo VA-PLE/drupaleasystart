@@ -24,6 +24,7 @@ jobs:
           make addsettings
           make druinsi
           make url
+          (curl drupal.docker.localhost:8272 | grep -iq "Welcome to Site-Install") || exit 1
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
