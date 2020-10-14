@@ -13,7 +13,7 @@ jobs:
 
     steps:
       # ...
-      - name: "Build & test"
+      - name: "Test"
         run: |
           git clone https://github.com/VA-PLE/drupaleasystart.git
           cd drupaleasystart
@@ -27,7 +27,8 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest"
           prerelease: false
-          title: Drupal easy start $VERSION
+          title: Drupal easy start
           files: |
-            LICENSE.txt
-            *.jar
+            .env
+            Makefile
+            docker-compose.yml
