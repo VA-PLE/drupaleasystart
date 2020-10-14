@@ -16,7 +16,6 @@ jobs:
       - name: "Build & test"
         run: |
           git clone https://github.com/VA-PLE/drupaleasystart.git
-#          cd drupaleasystart && pwd
           ls -la && pwd
           make info
 
@@ -24,7 +23,6 @@ jobs:
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest"
-#          automatic_release_tag: Release v1.0.9
           prerelease: false
           title: "Drupal easy start `date +%y.%m`"
           files: |
