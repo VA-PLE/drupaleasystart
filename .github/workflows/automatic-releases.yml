@@ -15,8 +15,8 @@ jobs:
       # ...
       - name: "Build & test"
         run: |
-          git clone https://github.com/VA-PLE/drupaleasystart.git
-          cd drupaleasystart && pwd
+#          git clone https://github.com/VA-PLE/drupaleasystart.git
+#          cd drupaleasystart && pwd
           make info
 
       - uses: "marvinpinto/action-automatic-releases@latest"
