@@ -4,11 +4,6 @@ include .env
 .PHONY: help
 help:
 	@sed -n 's/^##//p' Makefile
-#	@sed -n 's/^##//p' front.mk
-#	@sed -n 's/^##//p' file.mk
-
-#include file.mk
-#include front.mk
 
 ## info		:	About the project and site URL.
 .PHONY: info
@@ -109,7 +104,7 @@ gitclone8:
 	@cp -af drupal-vanilla/composer.json drupal-vanilla/composer.lock drupal-vanilla/composer.json .
 	@wget https://raw.githubusercontent.com/drupal-composer/drupal-project/8.x/.gitignore -O drupal-vanilla/.gitignore
 	@sed 'N;$$!P;$$!D;$$d' drupal-vanilla/.gitignore > .gitignore
-	@echo "docker-compose.override.yml\n*.tar\n*.tar.gz\n*.sql\n*.sql.gz" >> .gitignore
+	@echo "# Ignore other files\n*.tar\n*.tar.gz\n*.sql\n*.sql.gz" >> .gitignore
 	@rm -rf drupal-vanilla
 
 #gitclone9	:	Gitclone Composer template for Drupal 9 project.
@@ -119,7 +114,7 @@ gitclone9:
 	@cp -af drupal-vanilla/composer.json drupal-vanilla/composer.lock drupal-vanilla/composer.json .
 	@wget https://raw.githubusercontent.com/drupal-composer/drupal-project/9.x/.gitignore -O drupal-vanilla/.gitignore
 	@sed 'N;$$!P;$$!D;$$d' drupal-vanilla/.gitignore > .gitignore
-	@echo "docker-compose.override.yml\n*.tar\n*.tar.gz\n*.sql\n*.sql.gz" >> .gitignore
+	@echo "# Ignore other files\n*.tar\n*.tar.gz\n*.sql\n*.sql.gz" >> .gitignore
 	@rm -rf drupal-vanilla
 
 #restoredb	:	Mounts last modified sql database file from root dir.
@@ -158,7 +153,6 @@ coin:
 .PHONY: druinsi
 druinsi:
 	@docker exec -i $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) si -y standard --account-name=$(DRUPALADMIN) --account-pass=$(DRUPALPASS)
-#	@docker exec -i $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) cset system.site uuid c7635c29-335d-4655-b2b6-38cb111042d9
 
 ## upenv		:	Update .env file.
 .PHONY: upenv
