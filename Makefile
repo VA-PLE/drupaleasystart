@@ -117,7 +117,7 @@ gitclone8:
 gitclone9:
 	@git clone -b 9.x https://github.com/wodby/drupal-vanilla.git
 	@cp -af drupal-vanilla/composer.json drupal-vanilla/composer.lock drupal-vanilla/composer.json .
-	@wget https://raw.githubusercontent.com/drupal-composer/drupal-project/8.x/.gitignore -O drupal-vanilla/.gitignore
+	@wget https://raw.githubusercontent.com/drupal-composer/drupal-project/9.x/.gitignore -O drupal-vanilla/.gitignore
 	@sed 'N;$$!P;$$!D;$$d' drupal-vanilla/.gitignore > .gitignore
 	@echo "docker-compose.override.yml\n*.tar\n*.tar.gz\n*.sql\n*.sql.gz" >> .gitignore
 	@rm -rf drupal-vanilla
