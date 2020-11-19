@@ -129,7 +129,7 @@ addsettings:
 	@echo "\nСreate settings.php"
 	@cp -f $(SETTINGS_ROOT)/default.settings.php $(SETTINGS_ROOT)/settings.php
 	@echo '$$settings["hash_salt"] = "randomnadich";' >> $(SETTINGS_ROOT)/settings.php
-	@echo '$$settings["config_sync_directory"] = "config/sync";' >> $(SETTINGS_ROOT)/settings.php
+	@echo '$$settings["config_sync_directory"] = "../config";' >> $(SETTINGS_ROOT)/settings.php
 	@echo '$$databases["default"]["default"] = array (' >> $(SETTINGS_ROOT)/settings.php
 	@echo "  'database' => '$(DB_NAME)'," >> $(SETTINGS_ROOT)/settings.php
 	@echo "  'username' => '$(DB_USER)'," >> $(SETTINGS_ROOT)/settings.php
@@ -140,7 +140,7 @@ addsettings:
 	@echo "  'namespace' => 'Drupal\\\\\\\Core\\\\\\\Database\\\\\\\Driver\\\\\\\mysql'," >> $(SETTINGS_ROOT)/settings.php
 	@echo "  'driver' => '$(DB_DRIVER)'," >> $(SETTINGS_ROOT)/settings.php
 	@echo ");" >> $(SETTINGS_ROOT)/settings.php
-	@mkdir -p $(SITE_ROOT)config/sync
+	@mkdir -p config
 	@sleep 9
 
 #coin		:	Сomposer install.
