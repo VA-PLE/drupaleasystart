@@ -1,5 +1,8 @@
 include .env
 
+GREEN=\033[1;32m
+NORMAL=\033[0m
+
 #help		:	Print commands help.
 .PHONY: help
 help:
@@ -14,7 +17,7 @@ info: url
 ## up		:	Re-create containers or starting up only containers.
 .PHONY: up
 up:
-	@echo "Starting up containers for $(PROJECT_NAME)..."
+	@echo "${GREEN}\nStarting up containers for $(PROJECT_NAME)...${NORMAL}"
 	@docker-compose pull
 	@docker-compose up -d --remove-orphans
 
@@ -34,13 +37,13 @@ upsite: up coin addsettings url
 ## start		:	Start containers without updating.
 .PHONY: start
 start:
-	@echo "Starting containers for $(PROJECT_NAME) from where you left off..."
+	@echo "${GREEN}\nStarting containers for $(PROJECT_NAME) from where you left off...${NORMAL}"
 	@docker-compose start
 
 ## stop		:	Stop containers.
 .PHONY: stop
 stop:
-	@echo "Stopping containers for $(PROJECT_NAME)..."
+	@echo "${GREEN}\nStopping containers for $(PROJECT_NAME)...${NORMAL}"
 	@docker-compose stop
 
 ##
@@ -83,13 +86,13 @@ logs:
 ## prune		:	Remove containers and their volumes.
 .PHONY: prune
 prune:
-	@echo "Removing containers for $(PROJECT_NAME)..."
+	@echo "${GREEN}\nRemoving containers for $(PROJECT_NAME)...${NORMAL}"
 	@docker-compose down -v $(filter-out $@,$(MAKECMDGOALS))
 
 #url		:	Site URL.
 .PHONY: url
 url:
-	@echo "\nSite URL is $(PROJECT_BASE_URL):$(PORT)\n"
+	@echo "${GREEN}\nSite URL is $(PROJECT_BASE_URL):$(PORT)\n${NORMAL}"
 
 #hook		:	Add pre-commit hook for test code.
 .PHONY: hook
@@ -100,6 +103,7 @@ hook:
 #gitclone8	:	Gitclone Composer template for Drupal 8 project.
 .PHONY: gitclone8
 gitclone8:
+	@echo "${GREEN}\nCloned Composer template for Drupal 8 project...${NORMAL}"
 	@git clone -b 8.x https://github.com/wodby/drupal-vanilla.git
 	@cp -af drupal-vanilla/composer.json drupal-vanilla/composer.lock drupal-vanilla/composer.json .
 	@wget https://raw.githubusercontent.com/drupal-composer/drupal-project/8.x/.gitignore -O drupal-vanilla/.gitignore
@@ -110,6 +114,7 @@ gitclone8:
 #gitclone9	:	Gitclone Composer template for Drupal 9 project.
 .PHONY: gitclone9
 gitclone9:
+	@echo "${GREEN}\nCloned Composer template for Drupal 9 project...${NORMAL}"
 	@git clone -b 9.x https://github.com/wodby/drupal-vanilla.git
 	@cp -af drupal-vanilla/composer.json drupal-vanilla/composer.lock drupal-vanilla/composer.json .
 	@wget https://raw.githubusercontent.com/drupal-composer/drupal-project/9.x/.gitignore -O drupal-vanilla/.gitignore
@@ -120,13 +125,13 @@ gitclone9:
 #restoredb	:	Mounts last modified sql database file from root dir.
 .PHONY: restoredb
 restoredb:
-	@echo "\nDeploy `ls *.sql -t | head -n1` database"
+	@echo "${GREEN}\nDeploy `ls *.sql -t | head -n1` database...${NORMAL}"
 	@docker exec -i $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) sql-cli < `ls *.sql -t | head -n1`
 
 #addsettings	:	Сreate settings.php.
 .PHONY: addsettings
 addsettings:
-	@echo "\nСreate settings.php"
+	@echo "${GREEN}\nСreate settings.php...${NORMAL}"
 	@cp -f $(SETTINGS_ROOT)/default.settings.php $(SETTINGS_ROOT)/settings.php
 	@echo '$$settings["hash_salt"] = "randomnadich";' >> $(SETTINGS_ROOT)/settings.php
 	@echo '$$settings["config_sync_directory"] = "../config";' >> $(SETTINGS_ROOT)/settings.php
@@ -146,12 +151,13 @@ addsettings:
 #coin		:	Сomposer install.
 .PHONY: coin
 coin:
-	@echo "\nСomposer install"
+	@echo "${GREEN}\\nСomposer install${NORMAL}"
 	@docker exec $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") composer --working-dir=$(COMPOSER_ROOT) install
 
 #druinsi		:	Drush install site.
 .PHONY: druinsi
 druinsi:
+	@echo "${GREEN}\\nDrush install site${NORMAL}"
 	@docker exec -i $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) si -y standard --account-name=$(DRUPALADMIN) --account-pass=$(DRUPALPASS)
 
 ## upenv		:	Update .env file.
