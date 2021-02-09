@@ -140,7 +140,6 @@ addsettings:
 	@echo "  'driver' => '$(DB_DRIVER)'," >> $(SETTINGS_ROOT)/settings.php
 	@echo ");" >> $(SETTINGS_ROOT)/settings.php
 	@mkdir -p config
-	@sleep 9
 
 #coin		:	Сomposer install.
 .PHONY: coin
