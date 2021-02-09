@@ -94,12 +94,6 @@ prune:
 url:
 	@echo "${GREEN}\nSite URL is $(PROJECT_BASE_URL):$(PORT)\n${NORMAL}"
 
-#hook		:	Add pre-commit hook for test code.
-.PHONY: hook
-hook:
-	@echo "#!/bin/bash\nmake phpcs" > .git/hooks/pre-commit
-	@chmod +x .git/hooks/pre-commit
-
 #gitclone8	:	Gitclone Composer template for Drupal 8 project.
 .PHONY: gitclone8
 gitclone8:
@@ -159,15 +153,6 @@ coin:
 druinsi:
 	@echo "${GREEN}\\nDrush install site${NORMAL}"
 	@docker exec -i $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) si -y standard --account-name=$(DRUPALADMIN) --account-pass=$(DRUPALPASS)
-
-## upenv		:	Update .env file.
-.PHONY: upenv
-upenv:
-	@mv -f .env .env_backup; wget https://raw.githubusercontent.com/wodby/docker4drupal/master/.env -O temp
-	@sed 9i\ '\\nCOMPOSER_ROOT=/var/www/html\nSITE_ROOT=web/\nSETTINGS_ROOT=$$(SITE_ROOT)sites/default\nPORT=8272\n\nDRUPALADMIN=admin\nDRUPALPASS=pass' temp > temp2
-	@sed 26i\ "CODETESTER=vaple/phpcodesniffer:`date +%y.%m`\n" temp2 > .env
-	@rm -f temp temp2
-	@echo "\nCreate .env_backup and update .env file"
 
 %:
 	@:
