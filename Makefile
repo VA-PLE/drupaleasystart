@@ -11,7 +11,7 @@ help:
 ## info		:	About the project and site URL.
 .PHONY: info
 info: url
-	@grep -v '^ *#\|^ *$$' .env | head -n15
+	@grep -v '^ *#\|^ *$$' .env | head -n16
 
 ##
 ## up		:	Re-create containers or starting up only containers.
@@ -128,7 +128,7 @@ addsettings:
 	@echo "${GREEN}\nСreate settings.php...${NORMAL}"
 	@cp -f $(SETTINGS_ROOT)/default.settings.php $(SETTINGS_ROOT)/settings.php
 	@echo '$$settings["hash_salt"] = "randomnadich";' >> $(SETTINGS_ROOT)/settings.php
-	@echo '$$settings["config_sync_directory"] = "../config";' >> $(SETTINGS_ROOT)/settings.php
+	@echo '$$settings["config_sync_directory"] = "../$(CONFIG_SYNC_DIRECTORY)";' >> $(SETTINGS_ROOT)/settings.php
 	@echo '$$databases["default"]["default"] = array (' >> $(SETTINGS_ROOT)/settings.php
 	@echo "  'database' => '$(DB_NAME)'," >> $(SETTINGS_ROOT)/settings.php
 	@echo "  'username' => '$(DB_USER)'," >> $(SETTINGS_ROOT)/settings.php
@@ -139,7 +139,7 @@ addsettings:
 	@echo "  'namespace' => 'Drupal\\\\\\\Core\\\\\\\Database\\\\\\\Driver\\\\\\\mysql'," >> $(SETTINGS_ROOT)/settings.php
 	@echo "  'driver' => '$(DB_DRIVER)'," >> $(SETTINGS_ROOT)/settings.php
 	@echo ");" >> $(SETTINGS_ROOT)/settings.php
-	@mkdir -p config
+	@mkdir -p $(CONFIG_SYNC_DIRECTORY)
 
 #coin		:	Сomposer install.
 .PHONY: coin
