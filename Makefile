@@ -144,13 +144,13 @@ addsettings:
 #coin		:	Сomposer install.
 .PHONY: coin
 coin:
-	@echo "${GREEN}\\nСomposer install${NORMAL}"
+	@echo "${GREEN}\nСomposer install...${NORMAL}"
 	@docker exec $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") composer --working-dir=$(COMPOSER_ROOT) install
 
 #druinsi		:	Drush install site.
 .PHONY: druinsi
 druinsi:
-	@echo "${GREEN}\\nDrush install site${NORMAL}"
+	@echo "${GREEN}\nDrush install site...${NORMAL}"
 	@docker exec -i $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) si -y standard --account-name=$(DRUPALADMIN) --account-pass=$(DRUPALPASS)
 
 %:
