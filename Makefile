@@ -72,6 +72,12 @@ phpcs:
 phpcbf:
 	@docker run --rm -v $(shell pwd)/$(SITE_ROOT)profiles:/work/profiles -v $(shell pwd)/$(SITE_ROOT)modules:/work/modules -v $(shell pwd)/$(SITE_ROOT)themes:/work/themes $(CODETESTER) phpcbf --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme --ignore="*/contrib/*,*.features.*,*.pages*.inc" --colors .
 
+## restoredb	:	Mounts last modified sql database file from root dir.
+.PHONY: restoredb
+restoredb:
+	@echo "${GREEN}\nDeploy `ls *.sql -t | head -n1` database...${NORMAL}"
+	@docker exec -i $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) sql-cli < `ls *.sql -t | head -n1`
+
 ##
 ## ps		:	List running containers.
 .PHONY: ps
@@ -115,12 +121,6 @@ gitclone9:
 	@sed 'N;$$!P;$$!D;$$d' drupal-vanilla/.gitignore > .gitignore
 	@echo "# Ignore other files\n*.tar\n*.tar.gz\n*.sql\n*.sql.gz" >> .gitignore
 	@rm -rf drupal-vanilla
-
-#restoredb	:	Mounts last modified sql database file from root dir.
-.PHONY: restoredb
-restoredb:
-	@echo "${GREEN}\nDeploy `ls *.sql -t | head -n1` database...${NORMAL}"
-	@docker exec -i $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(COMPOSER_ROOT)/$(SITE_ROOT) sql-cli < `ls *.sql -t | head -n1`
 
 #addsettings	:	Сreate settings.php.
 .PHONY: addsettings
