@@ -105,7 +105,7 @@ url:
 gitclone8:
 	@echo "${GREEN}\nCloned Composer template for Drupal 8 project...${NORMAL}"
 	@git clone -b 8.x https://github.com/wodby/drupal-vanilla.git
-	@cp -af drupal-vanilla/composer.json drupal-vanilla/composer.lock drupal-vanilla/composer.json .
+	@cp -af drupal-vanilla/composer.json drupal-vanilla/composer.lock .
 	@wget https://raw.githubusercontent.com/drupal-composer/drupal-project/8.x/.gitignore -O drupal-vanilla/.gitignore
 	@sed 'N;$$!P;$$!D;$$d' drupal-vanilla/.gitignore > .gitignore
 	@echo "# Ignore other files\n*.tar\n*.tar.gz\n*.sql\n*.sql.gz" >> .gitignore
@@ -116,7 +116,7 @@ gitclone8:
 gitclone9:
 	@echo "${GREEN}\nCloned Composer template for Drupal 9 project...${NORMAL}"
 	@git clone -b 9.x https://github.com/wodby/drupal-vanilla.git
-	@cp -af drupal-vanilla/composer.json drupal-vanilla/composer.lock drupal-vanilla/composer.json .
+	@cp -af drupal-vanilla/composer.json drupal-vanilla/composer.lock .
 	@wget https://raw.githubusercontent.com/drupal-composer/drupal-project/9.x/.gitignore -O drupal-vanilla/.gitignore
 	@sed 'N;$$!P;$$!D;$$d' drupal-vanilla/.gitignore > .gitignore
 	@echo "# Ignore other files\n*.tar\n*.tar.gz\n*.sql\n*.sql.gz" >> .gitignore
