@@ -126,19 +126,19 @@ gitclone9:
 .PHONY: addsettings
 addsettings:
 	@echo "${GREEN}\nСreate settings.php...${NORMAL}"
-	@cp -f $(SETTINGS_ROOT)/default.settings.php $(SETTINGS_ROOT)/settings.php
-	@echo '$$settings["hash_salt"] = "randomnadich";' >> $(SETTINGS_ROOT)/settings.php
-	@echo '$$settings["config_sync_directory"] = "../$(CONFIG_SYNC_DIRECTORY)";' >> $(SETTINGS_ROOT)/settings.php
-	@echo '$$databases["default"]["default"] = array (' >> $(SETTINGS_ROOT)/settings.php
-	@echo "  'database' => '$(DB_NAME)'," >> $(SETTINGS_ROOT)/settings.php
-	@echo "  'username' => '$(DB_USER)'," >> $(SETTINGS_ROOT)/settings.php
-	@echo "  'password' => '$(DB_PASSWORD)'," >> $(SETTINGS_ROOT)/settings.php
-	@echo "  'prefix' => ''," >> $(SETTINGS_ROOT)/settings.php
-	@echo "  'host' => '$(DB_HOST)'," >> $(SETTINGS_ROOT)/settings.php
-	@echo "  'port' => '3306'," >> $(SETTINGS_ROOT)/settings.php
-	@echo "  'namespace' => 'Drupal\\\\\\\Core\\\\\\\Database\\\\\\\Driver\\\\\\\mysql'," >> $(SETTINGS_ROOT)/settings.php
-	@echo "  'driver' => '$(DB_DRIVER)'," >> $(SETTINGS_ROOT)/settings.php
-	@echo ");" >> $(SETTINGS_ROOT)/settings.php
+	@cp -f $(SITE_ROOT)sites/default/default.settings.php $(SETTINGS_PHP)
+	@echo '$$settings["hash_salt"] = "randomnadich";' >> $(SETTINGS_PHP)
+	@echo '$$settings["config_sync_directory"] = "../$(CONFIG_SYNC_DIRECTORY)";' >> $(SETTINGS_PHP)
+	@echo '$$databases["default"]["default"] = array (' >> $(SETTINGS_PHP)
+	@echo "  'database' => '$(DB_NAME)'," >> $(SETTINGS_PHP)
+	@echo "  'username' => '$(DB_USER)'," >> $(SETTINGS_PHP)
+	@echo "  'password' => '$(DB_PASSWORD)'," >> $(SETTINGS_PHP)
+	@echo "  'prefix' => ''," >> $(SETTINGS_PHP)
+	@echo "  'host' => '$(DB_HOST)'," >> $(SETTINGS_PHP)
+	@echo "  'port' => '3306'," >> $(SETTINGS_PHP)
+	@echo "  'namespace' => 'Drupal\\\\\\\Core\\\\\\\Database\\\\\\\Driver\\\\\\\mysql'," >> $(SETTINGS_PHP)
+	@echo "  'driver' => '$(DB_DRIVER)'," >> $(SETTINGS_PHP)
+	@echo ");" >> $(SETTINGS_PHP)
 	@mkdir -p $(CONFIG_SYNC_DIRECTORY)
 
 #coin		:	Сomposer install.
