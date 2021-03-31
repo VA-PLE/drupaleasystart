@@ -128,7 +128,7 @@ addsettings:
 	@echo "${GREEN}\nСreate settings.php...${NORMAL}"
 	@cp -f $(SITE_ROOT)sites/default/default.settings.php $(SETTINGS_PHP)
 	@echo '$$settings["hash_salt"] = "randomnadich";' >> $(SETTINGS_PHP)
-	@echo '$$settings["config_sync_directory"] = "../$(CONFIG_SYNC_DIRECTORY)";' >> $(SETTINGS_PHP)
+	@echo '$$settings["config_sync_directory"] = "$(CONFIG_SYNC_DIRECTORY)";' >> $(SETTINGS_PHP)
 	@echo '$$databases["default"]["default"] = array (' >> $(SETTINGS_PHP)
 	@echo "  'database' => '$(DB_NAME)'," >> $(SETTINGS_PHP)
 	@echo "  'username' => '$(DB_USER)'," >> $(SETTINGS_PHP)
