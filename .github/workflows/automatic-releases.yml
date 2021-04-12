@@ -3,7 +3,7 @@ name: Automatic releases
 on:
   schedule:
     - cron:  '0 12 1 * *'
-      
+
 jobs:
   release:
     name: "Release"

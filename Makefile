@@ -95,7 +95,7 @@ prune:
 	@echo "${GREEN}\nRemoving containers for $(PROJECT_NAME)...${NORMAL}"
 	@docker-compose down -v $(filter-out $@,$(MAKECMDGOALS))
 
-#url		:	Site URL.
+#url		: Show site URL.
 .PHONY: url
 url:
 	@echo "${GREEN}\nSite URL is $(PROJECT_BASE_URL):$(PORT)\n${NORMAL}"
