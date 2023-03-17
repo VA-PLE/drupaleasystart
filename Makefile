@@ -21,13 +21,13 @@ up:
 	@docker-compose pull
 	@docker-compose up -d --remove-orphans
 
-## upnewsite_D8	:	Deployment local new Drupal 8 site.
-.PHONY: upnewsite_D8
-upnewsite_D8: gitclone8 up coin addsettings druinsi url
+## upnewsite_D10	:	Deployment local new Drupal 10 site.
+.PHONY: upnewsite_D10
+upnewsite_D10: gitclone10 up coin addsettings updrush druinsi url
 
 ## upnewsite_D9	:	Deployment local new Drupal 9 site.
 .PHONY: upnewsite_D9
-upnewsite_D9: gitclone9 up coin addsettings druinsi url
+upnewsite_D9: gitclone9 up coin addsettings updrush url
 
 ## upsite		:	Automatic deploy local site.
 #default for Drupal sites: up coin addsettings (restoredb) url.
@@ -100,13 +100,13 @@ prune:
 url:
 	@echo "${GREEN}\nSite URL is $(PROJECT_BASE_URL):$(PORT)\n${NORMAL}"
 
-#gitclone8	:	Gitclone Composer template for Drupal 8 project.
-.PHONY: gitclone8
-gitclone8:
-	@echo "${GREEN}\nCloned Composer template for Drupal 8 project...${NORMAL}"
-	@git clone -b 8.x https://github.com/wodby/drupal-vanilla.git
+#gitclone10	:	Gitclone Composer template for Drupal 10 project.
+.PHONY: gitclone10
+gitclone10:
+	@echo "${GREEN}\nCloned Composer template for Drupal 10 project...${NORMAL}"
+	@git clone -b 10.x https://github.com/wodby/drupal-vanilla.git
 	@cp -af drupal-vanilla/composer.json drupal-vanilla/composer.lock .
-	@wget https://raw.githubusercontent.com/drupal-composer/drupal-project/8.x/.gitignore -O drupal-vanilla/.gitignore
+	@wget https://raw.githubusercontent.com/drupal-composer/drupal-project/10.x/.gitignore -O drupal-vanilla/.gitignore
 	@sed 'N;$$!P;$$!D;$$d' drupal-vanilla/.gitignore > .gitignore
 	@echo "# Ignore other files\n*.tar\n*.tar.gz\n*.sql\n*.sql.gz" >> .gitignore
 	@rm -rf drupal-vanilla
@@ -146,6 +146,11 @@ addsettings:
 coin:
 	@echo "${GREEN}\nСomposer install...${NORMAL}"
 	@docker exec $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") composer --working-dir=$(COMPOSER_ROOT) install
+
+#updrush		:	Install/Update Drush
+updrush:
+	@echo "${GREEN}\nInstall Drush...${NORMAL}"
+	@docker exec $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") composer --working-dir=$(COMPOSER_ROOT) require drush/drush
 
 #druinsi		:	Drush install site.
 .PHONY: druinsi
