@@ -100,13 +100,13 @@ prune:
 url:
 	@echo "${GREEN}\nSite URL is $(PROJECT_BASE_URL):$(PORT)\n${NORMAL}"
 
-#gitclone10	:	Gitclone Composer template for Drupal 8 project.
+#gitclone10	:	Gitclone Composer template for Drupal 10 project.
 .PHONY: gitclone10
 gitclone10:
 	@echo "${GREEN}\nCloned Composer template for Drupal 10 project...${NORMAL}"
 	@git clone -b 10.x https://github.com/wodby/drupal-vanilla.git
 	@cp -af drupal-vanilla/composer.json drupal-vanilla/composer.lock .
-	@wget https://raw.githubusercontent.com/drupal-composer/drupal-project/8.x/.gitignore -O drupal-vanilla/.gitignore
+	@wget https://raw.githubusercontent.com/drupal-composer/drupal-project/10.x/.gitignore -O drupal-vanilla/.gitignore
 	@sed 'N;$$!P;$$!D;$$d' drupal-vanilla/.gitignore > .gitignore
 	@echo "# Ignore other files\n*.tar\n*.tar.gz\n*.sql\n*.sql.gz" >> .gitignore
 	@rm -rf drupal-vanilla
