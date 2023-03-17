@@ -23,11 +23,11 @@ up:
 
 ## upnewsite_D10	:	Deployment local new Drupal 10 site.
 .PHONY: upnewsite_D10
-upnewsite_D10: gitclone10 up coin addsettings adddrush druinsi url
+upnewsite_D10: gitclone10 up coin addsettings updrush druinsi url
 
 ## upnewsite_D9	:	Deployment local new Drupal 9 site.
 .PHONY: upnewsite_D9
-upnewsite_D9: gitclone9 up coin addsettings adddrush url
+upnewsite_D9: gitclone9 up coin addsettings updrush url
 
 ## upsite		:	Automatic deploy local site.
 #default for Drupal sites: up coin addsettings (restoredb) url.
@@ -147,11 +147,10 @@ coin:
 	@echo "${GREEN}\nСomposer install...${NORMAL}"
 	@docker exec $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") composer --working-dir=$(COMPOSER_ROOT) install
 
-#adddrush		:	Install Drush
-adddrush:
+#updrush		:	Install/Update Drush
+updrush:
 	@echo "${GREEN}\nInstall Drush...${NORMAL}"
 	@docker exec $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") composer --working-dir=$(COMPOSER_ROOT) require drush/drush
-
 
 #druinsi		:	Drush install site.
 .PHONY: druinsi
